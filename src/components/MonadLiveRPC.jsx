@@ -87,7 +87,7 @@ export default function MonadLiveRPC() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 30000);
+    const interval = setInterval(fetchData, 0);
     return () => clearInterval(interval);
   }, []);
 
