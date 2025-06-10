@@ -49,7 +49,7 @@ export default function MonadLiveRPC() {
       const recentBlocks = [];
       for (let i = 0; i < 10; i++) {
         const block = await rpc("eth_getBlockByNumber", [
-          0x${(blockNumber - i).toString(16)},
+          "0x" + (blockNumber - i).toString(16),
           true,
         ]);
         recentBlocks.push(block);
