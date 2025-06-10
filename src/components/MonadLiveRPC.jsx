@@ -31,7 +31,7 @@ export default function MonadLiveRPC() {
       body: JSON.stringify(body),
     });
 
-    if (!res.ok) throw new Error(RPC error: ${res.status});
+    if (!res.ok) throw new Error(`RPC error: ${res.status}`);
     const json = await res.json();
     if (json.error) throw new Error(json.error.message || "RPC Error");
     return json.result;
