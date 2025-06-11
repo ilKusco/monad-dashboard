@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import Lottie from "react-lottie-player";
+import monanimalData from "../assets/monanimal.json"; // Lottie JSON file
 
 const RPC_URL = "https://testnet-rpc.monad.xyz";
-
-// Data di lancio testnet (stimata)
 const TESTNET_START_TIMESTAMP = new Date("2025-02-19T00:00:00Z");
 
 export default function MonadLiveRPC() {
@@ -60,9 +61,7 @@ export default function MonadLiveRPC() {
       recentBlocks.forEach((block) => {
         if (block && block.transactions) {
           totalTx += block.transactions.length;
-          contractCreationTxCount += block.transactions.filter(
-            (tx) => tx.to === null
-          ).length;
+          contractCreationTxCount += block.transactions.filter((tx) => tx.to === null).length;
         }
       });
       setRecentTxCount(totalTx);
@@ -87,14 +86,17 @@ export default function MonadLiveRPC() {
 
   useEffect(() => {
     fetchData();
-    const interval = setInterval(fetchData, 2000);
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
       style={{
-        background: "linear-gradient(135deg, #6a00f4, #9c63ff, #b27cff, #6a00f4)",
+        background: "linear-gradient(135deg, #4b0082, #7c3aed, #a855f7, #9333ea)",
         minHeight: "100vh",
         padding: "40px 20px",
         fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
@@ -103,14 +105,17 @@ export default function MonadLiveRPC() {
         flexDirection: "column",
         alignItems: "center",
         gap: 30,
+        overflow: "hidden",
       }}
     >
-      <img
-        src="https://cdn.prod.website-files.com/667c57e6f9254a4b6d914440/667d7104644c621965495f6e_LogoMark.svg"
-        alt="Monad Logo"
-        style={{ width: 80, height: 80, marginBottom: 10, filter: "drop-shadow(0 0 4px #fff)" }}
+      <Lottie
+        loop
+        animationData={monanimalData}
+        play
+        style={{ width: 100, height: 100 }}
       />
-      <h1
+
+      <motion.h1
         style={{
           fontWeight: "900",
           fontSize: "2.8rem",
@@ -118,24 +123,25 @@ export default function MonadLiveRPC() {
           letterSpacing: "0.1em",
           margin: 0,
         }}
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6 }}
       >
         Monascope
-      </h1>
+      </motion.h1>
+
       <h3 style={{ fontWeight: "400", marginTop: 0, color: "#e3d5ff" }}>
         Live Stats - Monad Testnet
       </h3>
 
       {error && (
-        <div
-          style={{
-            color: "#ff4d4d",
-            fontWeight: "700",
-            fontSize: "1.2rem",
-            marginTop: 10,
-          }}
+        <motion.div
+          style={{ color: "#ff4d4d", fontWeight: "700", fontSize: "1.2rem", marginTop: 10 }}
+          animate={{ scale: [1, 1.1, 1] }}
+          transition={{ repeat: Infinity, duration: 1 }}
         >
           Error: {error}
-        </div>
+        </motion.div>
       )}
 
       <div
@@ -147,15 +153,26 @@ export default function MonadLiveRPC() {
           maxWidth: 900,
         }}
       >
-        {[
-          { label: "Block Height", value: blockHeight ?? "..." },
-          { label: "Txs (last 10 blocks)", value: recentTxCount ?? "..." },
-          { label: "TPS (approx.)", value: tps ?? "..." },
-          { label: "Contracts Created (last 10 blocks)", value: totalContracts ?? "..." },
-          { label: "Dapps Created", value: "239" },
-          { label: "Testnet Days", value: daysSinceTestnet },
-        ].map(({ label, value }) => (
-          <div
+        {[{
+          label: "Block Height",
+          value: blockHeight ?? "..."
+        }, {
+          label: "Txs (last 10 blocks)",
+          value: recentTxCount ?? "..."
+        }, {
+          label: "TPS (approx.)",
+          value: tps ?? "..."
+        }, {
+          label: "Contracts Created",
+          value: totalContracts ?? "..."
+        }, {
+          label: "Dapps Created",
+          value: "239"
+        }, {
+          label: "Testnet Days",
+          value: daysSinceTestnet
+        }].map(({ label, value }) => (
+          <motion.div
             key={label}
             style={{
               background: "rgba(255, 255, 255, 0.1)",
@@ -165,19 +182,9 @@ export default function MonadLiveRPC() {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
               cursor: "default",
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.05)";
-              e.currentTarget.style.boxShadow =
-                "0 12px 40px 0 rgba(156, 99, 255, 0.7)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow =
-                "0 8px 32px 0 rgba(156, 99, 255, 0.3)";
-            }}
+            whileHover={{ scale: 1.05, boxShadow: "0 12px 40px rgba(156, 99, 255, 0.7)" }}
           >
             <span
               style={{
@@ -190,31 +197,28 @@ export default function MonadLiveRPC() {
             >
               {label}
             </span>
-            <span
+            <motion.span
               style={{
                 fontSize: 28,
                 fontWeight: "900",
                 color: "#fff",
                 letterSpacing: "0.05em",
               }}
+              key={value}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.4 }}
             >
               {value}
-            </span>
-          </div>
+            </motion.span>
+          </motion.div>
         ))}
       </div>
 
-      <footer
-        style={{
-          marginTop: 50,
-          fontSize: 14,
-          color: "#bb99ffcc",
-          userSelect: "none",
-        }}
-      >
-        Powered by Monad
+      <footer style={{ marginTop: 50, fontSize: 14, color: "#bb99ffcc", userSelect: "none" }}>
+        Powered by Monad & Monanimals
       </footer>
-    </div>
+    </motion.div>
   );
 }
 
