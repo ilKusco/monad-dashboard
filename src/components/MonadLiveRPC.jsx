@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Lottie from "react-lottie-player";
-import monanimalData from "../assets/monanimal.json"; // Lottie JSON file
+import monanimalData from "../assets/monanimal.json";
+import confetti from "../assets/confetti.gif";
+import partySound from "../assets/party.mp3";
 
 const RPC_URL = "https://testnet-rpc.monad.xyz";
 const TESTNET_START_TIMESTAMP = new Date("2025-02-19T00:00:00Z");
@@ -13,6 +15,7 @@ export default function MonadLiveRPC() {
   const [totalContracts, setTotalContracts] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [playSound, setPlaySound] = useState(false);
 
   const daysSinceTestnet = Math.floor(
     (new Date().getTime() - TESTNET_START_TIMESTAMP.getTime()) / (1000 * 60 * 60 * 24)
@@ -77,6 +80,7 @@ export default function MonadLiveRPC() {
       } else {
         setTps("N/A");
       }
+      setPlaySound(true);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -96,101 +100,110 @@ export default function MonadLiveRPC() {
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
       style={{
-        background: "linear-gradient(135deg, #4b0082, #7c3aed, #a855f7, #9333ea)",
+        background: "linear-gradient(135deg, #ff69b4, #ffb347, #b19cd9, #7fffd4)",
         minHeight: "100vh",
         padding: "40px 20px",
-        fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+        fontFamily: "'Comic Sans MS', cursive",
         color: "#fff",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         gap: 30,
         overflow: "hidden",
+        position: "relative"
       }}
     >
+      {playSound && (
+        <audio autoPlay src={partySound} />
+      )}
+
+      <img src={confetti} alt="confetti" style={{ position: 'absolute', top: 0, width: '100%', zIndex: 0, pointerEvents: 'none' }} />
+
       <Lottie
         loop
         animationData={monanimalData}
         play
-        style={{ width: 100, height: 100 }}
+        style={{ width: 120, height: 120, zIndex: 1 }}
       />
 
       <motion.h1
         style={{
           fontWeight: "900",
-          fontSize: "2.8rem",
-          textShadow: "0 0 10px #d2afff",
-          letterSpacing: "0.1em",
-          margin: 0,
+          fontSize: "3rem",
+          textShadow: "0 0 15px #fff",
+          transform: "rotate(-2deg)",
+          color: "#fff176",
+          zIndex: 1
         }}
-        initial={{ y: -40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        animate={{ rotate: [0, -2, 2, -2, 0] }}
+        transition={{ duration: 3, repeat: Infinity }}
       >
-        Monascope
+        🎉 Monascope Madness 🎉
       </motion.h1>
 
-      <h3 style={{ fontWeight: "400", marginTop: 0, color: "#e3d5ff" }}>
-        Live Stats - Monad Testnet
+      <h3 style={{ fontWeight: "400", marginTop: 0, color: "#ffe0f0", zIndex: 1 }}>
+        🧙‍♂️ Live Silly Stats of Monad Testnet 🐸
       </h3>
 
       {error && (
         <motion.div
-          style={{ color: "#ff4d4d", fontWeight: "700", fontSize: "1.2rem", marginTop: 10 }}
+          style={{ color: "#ff4d4d", fontWeight: "700", fontSize: "1.2rem", marginTop: 10, zIndex: 1 }}
           animate={{ scale: [1, 1.1, 1] }}
           transition={{ repeat: Infinity, duration: 1 }}
         >
-          Error: {error}
+          💥 Oopsie! {error}
         </motion.div>
       )}
 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
           gap: 25,
           width: "100%",
           maxWidth: 900,
+          zIndex: 1
         }}
       >
         {[{
           label: "Block Height",
-          value: blockHeight ?? "..."
+          value: blockHeight ?? "🤷‍♂️"
         }, {
           label: "Txs (last 10 blocks)",
-          value: recentTxCount ?? "..."
+          value: recentTxCount ?? "🐌"
         }, {
           label: "TPS (approx.)",
-          value: tps ?? "..."
+          value: tps ?? "🌀"
         }, {
           label: "Contracts Created",
-          value: totalContracts ?? "..."
+          value: totalContracts ?? "🎭"
         }, {
           label: "Dapps Created",
-          value: "239"
+          value: "239 🚀"
         }, {
           label: "Testnet Days",
-          value: daysSinceTestnet
+          value: daysSinceTestnet + " 🗓️"
         }].map(({ label, value }) => (
           <motion.div
             key={label}
             style={{
-              background: "rgba(255, 255, 255, 0.1)",
-              borderRadius: 20,
-              padding: 20,
-              boxShadow: "0 8px 32px 0 rgba(156, 99, 255, 0.3)",
+              background: "rgba(255, 255, 255, 0.3)",
+              borderRadius: 25,
+              padding: 25,
+              boxShadow: "0 8px 32px 0 rgba(255, 105, 180, 0.4)",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              cursor: "default",
+              cursor: "pointer",
+              transform: "rotate(" + (Math.random() * 4 - 2) + "deg)"
             }}
-            whileHover={{ scale: 1.05, boxShadow: "0 12px 40px rgba(156, 99, 255, 0.7)" }}
+            whileHover={{ scale: 1.08, rotate: Math.random() > 0.5 ? 2 : -2 }}
           >
             <span
               style={{
                 fontSize: 18,
                 fontWeight: "600",
-                color: "#cdb4ff",
+                color: "#fff1fa",
                 marginBottom: 10,
                 textAlign: "center",
               }}
@@ -199,7 +212,7 @@ export default function MonadLiveRPC() {
             </span>
             <motion.span
               style={{
-                fontSize: 28,
+                fontSize: 30,
                 fontWeight: "900",
                 color: "#fff",
                 letterSpacing: "0.05em",
@@ -215,10 +228,9 @@ export default function MonadLiveRPC() {
         ))}
       </div>
 
-      <footer style={{ marginTop: 50, fontSize: 14, color: "#bb99ffcc", userSelect: "none" }}>
-        Powered by Monad & Monanimals
+      <footer style={{ marginTop: 50, fontSize: 16, color: "#ffe0f0", userSelect: "none", zIndex: 1 }}>
+        ✨ Powered by Monad & Monanimals in Party Mode ✨
       </footer>
     </motion.div>
   );
 }
-
